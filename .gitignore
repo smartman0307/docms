@@ -1,0 +1,31 @@
+<<<<<<< HEAD
+# Build and Release Folders
+*.csv
+*.dat
+*.iml
+*.log
+*.out
+*.pid
+*.seed
+*.sublime-*
+*.swo
+*.swp
+*.tgz
+*.xml
+.DS_Store
+.idea
+.project
+.strong-pm
+coverage
+node_modules
+npm-debug.log
+bin/
+bin-debug/
+bin-release/
+
+# Other files and folders
+.settings/
+
+# Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
+# should NOT be excluded as they contain compiler settings and other important
+# information for Eclipse / Flash Builder.
