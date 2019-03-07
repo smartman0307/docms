@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  api:
+    build: .
+    depends_on:
+      - docms-db
+    ports:
+      - '8080:3000'
+
+  docms-db:
+    image: postgres:11.2-alpine
+    environment:
+      POSTGRES_DB: 'docms_development'
+      POSTGRES_USER: 'docker'
+      POSTGRES_PASSWORD: 'docker'

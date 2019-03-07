@@ -1,7 +1,7 @@
-var documentsController = require('./documents'),
-  usersController = require('./users');
+var documents = require('./documents'),
+  users = require('./users');
 
 module.exports = {
-  documents: documentsController,
-  users: usersController
+  documents,
+  users
 }

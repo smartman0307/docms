@@ -23,6 +23,9 @@ app.use(cookieParser());
 
 app.use('/users', usersRouter);
 app.use('/documents', documentsRouter);
+app.get('*', (req, res) => res.status(200).send({
+  message: 'Welcome to the beginning of nothingness.',
+}));
 // authentication middleware
 app.use(auth.authenticate);
 

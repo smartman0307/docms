@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "docker",
+    "password": "docker",
+    "database": "docms_development",
+    "host": "docms-db",
+    "port": "5432",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": null,
+    "password": null,
+    "database": "docms_test",
+    "host": "127.0.0.1",
+    "port": "5432",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": null,
+    "password": null,
+    "database": "docms_production",
+    "host": "127.0.0.1",
+    "port": "5432",
+    "dialect": "postgres"
+  }
+}

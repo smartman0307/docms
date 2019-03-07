@@ -1,12 +1,10 @@
-var serverConfig = require('../../config/serverConfig'),
+var serverConfig = require('../config/serverConfig'),
   jsonwebtoken = require('jsonwebtoken'),
   secretKey = serverConfig.secretKey,
-  db = require('../../models/index'),
-  User = require('../../models/user');
+  models = require('../models');
 
 // create token for authentication
 function createToken(user) {
-  console.log(user);
   return jsonwebtoken.sign({
     id: user._id,
     name: user.name,
@@ -19,49 +17,46 @@ function createToken(user) {
 module.exports = {
   createUser: function (req, res, next) {
     var user = {
-      first_name: req.body.firstname,
-      last_name: req.body.lastname,
+      firstName: req.body.firstname,
+      lastName: req.body.lastname,
       email: req.body.email,
       username: req.body.username,
       password: req.body.password,
       role: req.body.role
     };
 
-
-    return db.sequelize.sync()
-      .then(() => User.create(user))
-      .then((user) => res.json({
-        success: true,
-        message: 'User has been created!',
-        token: createToken(user)
-      }))
-      .catch((err) => res.send(err));
+    return models.User.create(user)
+      .then((user) => {
+        return res.json({
+          success: true,
+          message: 'User has been created!',
+          token: createToken(user)
+        })
+      })
+      .catch((err) => {
+        return res.status(400).send(err);
+      });
   },
 
   login: function (req, res, next) {
-    return db.sequelize.sync()
-      .then(() => User.findOne({ where: { username: req.body.username } }))
+    return models.User.findOne({ where: { username: req.body.username } })
       .then((user) => {
         // compare passwords with db user's password
-        var validPassword = user.comparePassword(req.body.password);
-
-        if (!validPassword) {
+        if (!user.comparePassword(req.body.password)) {
           throw new Error('Invalid Password');
         }
 
         return user;
       })
-      .then(() => {
-        var token = createToken(user);
-
+      .then((user) => {
         return res.json({
           id: user._id,
           success: true,
           message: "Successfully logged in!",
-          token: token
+          token: createToken(user)
         });
       })
-      .catch((err) => res.send(err));
+      .catch((err) => res.status(400).send(err));
   },
 
   logout: function (req, res) {
@@ -73,41 +68,40 @@ module.exports = {
   },
 
   getAllUsers: function (req, res, next) {
-    return db.sequelize.sync()
-      .then(() => User.findAll().then(users => res.json(users)))
-      .catch((err) => res.send(err));
+    return models.User.findAll()
+      .then(users => res.json(users))
+      .catch((err) => res.status(400).send(err));
   },
 
   getUser: function (req, res) {
     var id = req.param('id');
 
-    return db.sequelize.sync()
-      .then(() => User.findById(id).then(user => res.json(user)))
-      .catch((err) => res.send(err));
+    return models.User.findById(id)
+      .then(user => res.json(user))
+      .catch((err) => res.status(400).send(err));
   },
 
   getAllUsersRoles: function () {
-    return db.sequelize.sync()
-      .then(() => User.findAll({ where: { role: 'User' } }).then(users => res.json(users)))
-      .catch((err) => res.send(err));
+    return models.User.findAll({ where: { role: 'User' } })
+      .then(users => res.json(users))
+      .catch((err) => res.status(400).send(err));
   },
 
   getAllAdminRoles: function () {
-    return db.sequelize.sync()
-      .then(() => User.findAll({ where: { role: 'Administrator' } }).then(users => res.json(users)))
-      .catch((err) => res.send(err));
+    return models.User.findAll({ where: { role: 'Administrator' } })
+      .then(users => res.json(users))
+      .catch((err) => res.status(400).send(err));
   },
 
   deleteUser: function (req, res) {
     var id = req.param('id');
 
-    return db.sequelize.sync()
-      .then(() => User.destroy({ where: { id: id } }))
+    return models.User.destroy({ where: { id: id } })
       .then(() => res.status(200).json({
         success: true,
         message: `User with id: ${id} has been deleted!`
       }))
-      .catch((err) => res.send(err));
+      .catch((err) => res.status(400).send(err));
   },
 
   updateUser: function (req, res) {
@@ -121,12 +115,11 @@ module.exports = {
         role: req.body.role
       };
 
-    return db.sequelize.sync()
-      .then(() => User.update(updatedUser, { where: { id: id } }))
+    return models.User.update(updatedUser, { where: { id: id } })
       .then(() => res.status(200).json({
         success: true,
         message: `User with id: ${id} has been updated!`
       }))
-      .catch((err) => res.send(err));
+      .catch((err) => res.status(400).send(err));
   },
 }

@@ -2,7 +2,7 @@
   'use strict';
 
   // require the module jsonwebtoken
-  var config = require('../../config/serverConfig'),
+  var config = require('../config/serverConfig'),
     jsonwebtoken = require('jsonwebtoken'),
     secretKey = config.secretKey;
 
