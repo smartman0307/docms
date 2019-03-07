@@ -25,11 +25,14 @@
     "express": "^4.13.3",
     "http": "0.0.0",
     "jsonwebtoken": "^5.4.0",
-    "mongoose": "^4.1.12",
     "morgan": "^1.9.1",
     "path": "^0.12.7",
+    "pg": "^7.8.1",
+    "pg-hstore": "^2.3.2",
     "prompt": "^0.2.14",
-    "pug": "2.0.0-beta11",
+    "pug": "^2.0.3",
+    "sequelize": "^4.43.0",
+    "sequelize-cli": "^5.4.0",
     "serve-favicon": "~2.4.5"
   }
 }

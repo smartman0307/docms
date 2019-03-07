@@ -2,7 +2,31 @@
 The system manages documents, users and userroles. Each document defines access rights; the document defines which roles can access it. Also, each document specifies the date it was published.
 
 ### Database
-The system is developed using `mongoose` an ODM for node.
+This has since moved to using a `postgres` DB. Install Postgres using `Homebrew` (https://www.codefellows.org/blog/three-battle-tested-ways-to-install-postgresql)
+
+On cmd,
+1. `psql`
+2. `# CREATE DATABASE testdb;`
+3. ``` CREATE TABLE USERS(
+   ID SERIAL PRIMARY KEY     NOT NULL,
+   FIRST_NAME     TEXT    NOT NULL,
+   LAST_NAME      TEXT    NOT NULL,
+   USERNAME       TEXT    NOT NULL,
+   EMAIL          TEXT    NOT NULL,
+   PASSWORD       TEXT    NOT NULL,
+   ROLE           TEXT    NOT NULL
+); ```
+4. ``` CREATE TABLE DOCUMENTS(
+   DOCUMENT_ID    INT     NOT NULL,
+   OWNER_ID INT  REFERENCES USERS(ID),
+   TITLE          TEXT    NOT NULL,
+   CONTENT        CHAR(400)    NOT NULL,
+   DATE_CREATED   DATE    NOT NULL,
+   LAST_MODIFIED  DATE    NOT NULL,
+   PRIMARY KEY (DOCUMENT_ID,OWNER_ID)
+); ```
+5. Test INSERT `INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,USERNAME,EMAIL,PASSWORD,ROLE) VALUES (1, 'Nate', 'Martin', 'n8e','godmetweenciati@gmail.com', 'Abcd123!', 'Administrator');`
+6. `select * from users;`
 
 ### Running the Project
 You'll require the `nodemon` node package which you can get by running `npm install nodemon --save` from your console. We use this module to run our `documentManager.js` file as follows `nodemon documentManager.js` on the terminal.
