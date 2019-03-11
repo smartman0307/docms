@@ -1,59 +1,29 @@
-## docms: document-management-system
+# docms
+
 The system manages documents, users and userroles. Each document defines access rights; the document defines which roles can access it. Also, each document specifies the date it was published.
 
-### Database
-This has since moved to using a `postgres` DB. Install Postgres using `Homebrew` (https://www.codefellows.org/blog/three-battle-tested-ways-to-install-postgresql)
 
-On cmd,
-1. `psql`
-2. `# CREATE DATABASE testdb;`
-3. 
+### Database
+
+#### On Docker
+This has since moved to using a `postgres` DB. We are using the postgres docker image. If you'd like to use this locally. Checkout the section on running this locally.
+
+We set the database environment in the [environment section](https://github.com/n8e/docms/blob/master/docker-compose.yml#L13). This creates a database named `'docms_development'` that has a role named `'docker'` with the same password. See more on Docker Environment [here](https://docs.docker.com/samples/library/postgres/).
+
+On running `npm start`, the prestart script in package.json is triggered first. This script uses [sequelize-cli](https://github.com/sequelize/cli) to perform migrations (We are using `Sequelize` as the ORM with Postgres). For this project, we have a `./.sequelizerc` that instructs sequelize-cli on where the directories and config files should be located. The models and migrations directories are generated using the `./node_modules/.bin/sequelize init` command. This comes with the `./server/models/index.js` file. See [this article](https://scotch.io/tutorials/getting-started-with-node-express-and-postgres-using-sequelize#toc-sequelize-setup) to read more on this setup.
+
+Note: Because we are using the postgres image which creates a database and role based on the given environment variables, we need the sequelize config to reflect those variable values. These are found [here](https://github.com/n8e/docms/blob/master/server/config/config.json#L2). We have already seen the database, username and password from the docker-compose config. We need to change the `"host"` value, which defaults to `"127.0.0.1"`, to the same name as the database service in the `docker-compose.yml` file.
+
+#### Running locally
+Install Postgres using `Homebrew` (https://www.codefellows.org/blog/three-battle-tested-ways-to-install-postgresql)
+On command-line, run `psql` and create the database in subsequent psql session:
 ```
-CREATE TABLE USERS(
-   ID SERIAL PRIMARY KEY     NOT NULL,
-   FIRST_NAME     TEXT    NOT NULL,
-   LAST_NAME      TEXT    NOT NULL,
-   USERNAME       TEXT    NOT NULL,
-   EMAIL          TEXT    NOT NULL,
-   PASSWORD       TEXT    NOT NULL,
-   ROLE           TEXT    NOT NULL
-); 
+CREATE DATABASE docms_development;
 ```
-4.
-```
-CREATE TABLE DOCUMENTS(
-   DOCUMENT_ID    INT     NOT NULL,
-   OWNER_ID INT  REFERENCES USERS(ID),
-   TITLE          TEXT    NOT NULL,
-   CONTENT        CHAR(400)    NOT NULL,
-   DATE_CREATED   DATE    NOT NULL,
-   LAST_MODIFIED  DATE    NOT NULL,
-   PRIMARY KEY (DOCUMENT_ID,OWNER_ID)
-);
-```
-5. Test INSERT `INSERT INTO USERS (ID,FIRST_NAME,LAST_NAME,USERNAME,EMAIL,PASSWORD,ROLE) VALUES (1, 'Nate', 'Martin', 'n8e','godmetweenciati@gmail.com', 'Abcd123!', 'Administrator');`
-6. `select * from users;`
+On the `./server/config/config.json` file, change the `"username"` and `"password"` fields under `"development"` environment to value `null`. The host needs to be a localhost value e.g `"127.0.0.1"`.
+
+Run `npm start`.
+
 
 ### Running the Project
-You'll require the `nodemon` node package which you can get by running `npm install nodemon --save` from your console. We use this module to run our `documentManager.js` file as follows `nodemon documentManager.js` on the terminal.
-
-MongoDB needs to be installed on your local machine. Along with it, the `mongoose` node package is required. Install it by running `npm install mongoose --save` on your console. Once it is done, you'll need to run `mongod` from your console.
-
-To run the tests, you'll require to install `jasmine-node`, as `npm install jasmine-node --save`. Once completed, the Spec file is executed by running `jasmine-node documentManagerSpec.js`.
-
-There is a gulpfile to automate tasks for the project, you only need to run `mongod` and `gulp` on the console.
-
-### Logging in through the Command-line
-
-We use the built in `curl` application to make http requests and get responses.
-To access the default page when at localhost, use
-    `curl --verbose http://localhost:3000` or `curl --request  GET "http://localhost:3000"`
-    This returns the default server response.
-
-To login you user `natemmartin` password `12345`, use
-    `curl --data "username=natemmartin&password=12345" http://localhost:3000/api/users/login`
-
-This user needs to have signed up first. To do this for user called _Fred Quimby_ , use
-    `curl --data "firstname=Fred&lastname=Quimby&username=fquimby&password=12345&role=User&email=fquimby@cartoons.net" http://localhost:3000/api/users`
-
-curl --data “firstname=Jason&lastname=Bourne&username=jb&password=12345&role=admin&email=jbourne@ultimatum.gov" http://localhost:3000/api/users
+The express API is conteinerised using Docker (See the `./Dockerfile`). Run the project using `docker-compose up` command.
